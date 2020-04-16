@@ -1,5 +1,5 @@
 # 316493758
-# 6
+# 5
 
 ERROR_MSG_INVALID_ITEMS_LIST = "Invalid items list"
 ERROR_MSG_ITEM_COUNT_DOES_NOT_FIT = "Items count does not fit"
