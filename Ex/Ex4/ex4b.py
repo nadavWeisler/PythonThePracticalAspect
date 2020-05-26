@@ -1,6 +1,6 @@
 from scipy import ndimage
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 class MyImage(object):
     """
@@ -62,9 +62,11 @@ def image_hist(img_array):
     :param img_array:   Image numpy array
     :return:    Histogram
     """
-    plt.hist(img_array.ravel(), 255, density=100, color="blue")
-    plt.xlabel('Color pixels')
-    plt.ylabel('Occasions')
-    plt.title('Histogram of color distribution')
-    plt.grid(True)
+    plt.hist(img_array[:, :, 0].ravel(), color='red', alpha=0.5)
+    plt.hist(img_array[:, :, 1].ravel(), color='Green', alpha=0.5)
+    plt.hist(img_array[:, :, 2].ravel(), color='Blue', alpha=0.5)
+    plt.xlabel('Color Strength')
+    plt.ylabel('Color Count')
+    plt.legend(['Red', 'Green', 'Blue'])
+    plt.title("Color Distribution")
     plt.show()
