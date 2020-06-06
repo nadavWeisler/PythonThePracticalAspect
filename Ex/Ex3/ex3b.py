@@ -58,7 +58,7 @@ class SnakesAndLadders(object):
         turn = 0
         current_position = 0
         rolls = []
-        while turn <= 900 and not won:
+        while turn < 900 and not won:
             turn += 1
             dice_value = self.roll_dice()
             rolls.append(dice_value)
