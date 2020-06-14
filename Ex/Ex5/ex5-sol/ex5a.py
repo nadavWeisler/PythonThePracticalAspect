@@ -1,4 +1,6 @@
-import numpy as np
+# 316493758
+# 4
+
 import pandas as pd
 
 SPECIAL_WORD = "huji"
