@@ -15,6 +15,7 @@ YELLOW = (255, 255, 0)
 GREY = (127, 127, 127)
 TARGET_RIGHT = [(1000, 425), (1050, 425), (1050, 375), (1000, 375)]
 TARGET_LEFT = [(200, 425), (250, 425), (250, 375), (200, 375)]
+TEST_LENGTH = 10
 
 
 def create_all_combinations(lst, num_of_repetitions):
@@ -88,9 +89,10 @@ class SimpleDecisionTask(object):
 
     def start_instruction_screen(self):
         self.display_text_on_screen(self.instruction_msg)
-        self.wait_for_left_right_press()
+        # Wait for a response only if manual game
+        if self.manual_game:
+            self.wait_for_left_right_press()
         pygame.time.delay(self.between_trials_time)
-
 
     def run_round(self, round_index):
         cur_round = self.rounds[round_index]
@@ -158,13 +160,33 @@ class SimpleDecisionTask(object):
             self.run_round(round_index)
 
 
+def test_agent(agent_instance):
+    game_object = SimpleDecisionTask(num_of_repetitions=30,
+                                     manual_game=False,
+                                     my_agent=agent_instance)
+
+    results = get_result_after_n_times(game_object)
+    return [max(results), sum(results) / len(results)]
+
+
+def get_result_after_n_times(game):
+    results = []
+    for i in range(100):
+        game.start_exp()
+        results.append(game.get_results()["Reward"].sum())
+    return results
+
+
 if __name__ == "__main__":
-    game = SimpleDecisionTask(num_of_repetitions=30, manual_game=False, my_agent=agent.ComparingColorsAgent())  # Agent mode
+    game = SimpleDecisionTask(num_of_repetitions=30, manual_game=False,
+                              my_agent=agent.ComparingColorsAgent())  # Agent mode
+
+    print(test_agent(agent.RandomAgent()))
+    print(test_agent(agent.ComparingColorsAgent()))
+    print(test_agent(agent.ColorBasedAgent()))
     # game = SimpleDecisionTask(num_of_repetitions=20, manual_game=True) # Manual mode
-    game.start_exp()
-    df = game.get_results()
-    output_path = r"your_path_output.csv"
-    df.to_csv(output_path)
-    print("The score in this run is %f." % df["Reward"].sum())
-
-
+    # game.start_exp()
+    # df = game.get_results()
+    # output_path = r"your_path_output.csv"
+    # df.to_csv(output_path)
+    # print("The score in this run is %f." % df["Reward"].sum())

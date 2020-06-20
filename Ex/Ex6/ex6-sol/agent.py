@@ -88,3 +88,45 @@ class ComparingColorsAgent(Agent):
 
         # update the state of the opposite sides
         self.stats_table[(key[1], key[0])] = 1 - self.stats_table[key]
+
+
+class ColorBasedAgent(Agent):
+    def __init__(self):
+        """
+        Constructor
+        Initiation of memory parameters and alpha
+        """
+        super().__init__()
+        self.left_color_probability = 0
+        self.right_color_probability = 0
+        self.last_choice = 0
+        self.alpha = 0.2
+        self.RIGHT = 1
+        self.LEFT = 0
+
+    def make_decision(self, left_color, right_color):
+        """
+        Make decision
+        """
+        if self.left_color_probability >= self.right_color_probability:
+            self.last_choice = self.LEFT
+        else:
+            self.last_choice = self.RIGHT
+        return ["left", "right"][self.last_choice]
+
+    def get_reward(self, reward):
+        """
+        Get reward
+        """
+        if self.last_choice == self.LEFT:
+            self.left_color_probability = \
+                self.get_new_probability(reward, self.left_color_probability)
+        else:
+            self.right_color_probability = \
+                self.get_new_probability(reward, self.right_color_probability)
+
+    def get_new_probability(self, reward, current_probability):
+        """
+        Get new probability
+        """
+        return ((1 - self.alpha) * current_probability) + (self.alpha * reward)

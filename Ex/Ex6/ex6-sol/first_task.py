@@ -15,6 +15,7 @@ YELLOW = (255, 255, 0)
 GREY = (127, 127, 127)
 TARGET = [(400, 200), (400, 600), (800, 600), (800, 200)]
 
+
 class FirstExp(object):
     def __init__(self):
         # screen parameters
@@ -55,7 +56,6 @@ class FirstExp(object):
         # show the instruction
         self.display_text_on_screen(self.instruction_msg)
         self.wait_for_left_right_press()
-
 
         # black screen
         self.screen.fill(BLACK)
