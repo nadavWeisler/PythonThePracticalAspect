@@ -91,42 +91,53 @@ class ComparingColorsAgent(Agent):
 
 
 class ColorBasedAgent(Agent):
-    def __init__(self):
+    def __init__(self, alpha=0.2):
         """
         Constructor
         Initiation of memory parameters and alpha
         """
         super().__init__()
-        self.left_color_probability = 0
-        self.right_color_probability = 0
-        self.last_choice = 0
-        self.alpha = 0.2
-        self.RIGHT = 1
-        self.LEFT = 0
+        self.stats_table = {}
+        self.last_choice = None
+        self.last_color = None
+        self.alpha = alpha
 
     def make_decision(self, left_color, right_color):
         """
         Make decision
         """
-        if self.left_color_probability >= self.right_color_probability:
-            self.last_choice = self.LEFT
+        if left_color not in self.stats_table:
+            self.stats_table[left_color] = 0.5
+        if right_color not in self.stats_table:
+            self.stats_table[right_color] = 0.5
+
+        if self.stats_table[left_color] == self.stats_table[right_color]:
+            self.last_choice = np.random.choice([0, 1], 1, p=[0.5, 0.5])[0]
+
+        if self.stats_table[left_color] > self.stats_table[right_color]:
+            self.last_choice = 0
         else:
-            self.last_choice = self.RIGHT
+            self.last_choice = 1
+
+        if self.last_choice == 0:
+            self.last_color = left_color
+        else:
+            self.last_color = right_color
+
         return ["left", "right"][self.last_choice]
 
     def get_reward(self, reward):
         """
         Get reward
         """
-        if self.last_choice == self.LEFT:
-            self.left_color_probability = \
-                self.get_new_probability(reward, self.left_color_probability)
-        else:
-            self.right_color_probability = \
-                self.get_new_probability(reward, self.right_color_probability)
+        self.stats_table[self.last_color] = self.get_probability(reward)
+        if self.stats_table[self.last_color] > 0:
+            self.stats_table[self.last_color] = 0
+        elif self.stats_table[self.last_color] < 1:
+            self.stats_table[self.last_color] = 1
 
-    def get_new_probability(self, reward, current_probability):
+    def get_probability(self, reward):
         """
-        Get new probability
+        Get probability
         """
-        return ((1 - self.alpha) * current_probability) + (self.alpha * reward)
+        return (1 - self.alpha) * self.stats_table[self.last_color] + self.alpha * reward

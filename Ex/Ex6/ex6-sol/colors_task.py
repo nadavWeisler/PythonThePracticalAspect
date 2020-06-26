@@ -161,20 +161,14 @@ class SimpleDecisionTask(object):
 
 
 def test_agent(agent_instance):
-    game_object = SimpleDecisionTask(num_of_repetitions=30,
-                                     manual_game=False,
-                                     my_agent=agent_instance)
-
-    results = get_result_after_n_times(game_object)
-    return [max(results), sum(results) / len(results)]
-
-
-def get_result_after_n_times(game):
     results = []
     for i in range(100):
-        game.start_exp()
-        results.append(game.get_results()["Reward"].sum())
-    return results
+        game_object = SimpleDecisionTask(num_of_repetitions=30,
+                                         manual_game=False,
+                                         my_agent=agent_instance)
+        game_object.start_exp()
+        results.append(game_object.get_results()["Reward"].sum())
+    return [max(results), sum(results) / len(results)]
 
 
 if __name__ == "__main__":
@@ -183,10 +177,37 @@ if __name__ == "__main__":
 
     print(test_agent(agent.RandomAgent()))
     print(test_agent(agent.ComparingColorsAgent()))
-    print(test_agent(agent.ColorBasedAgent()))
-    # game = SimpleDecisionTask(num_of_repetitions=20, manual_game=True) # Manual mode
-    # game.start_exp()
-    # df = game.get_results()
-    # output_path = r"your_path_output.csv"
-    # df.to_csv(output_path)
-    # print("The score in this run is %f." % df["Reward"].sum())
+    print(test_agent(agent.ColorBasedAgent(0.2)))
+
+    alpha = 0.2
+    results = []
+    alphas = []
+    for i in range(1, 11):
+        alphas.append(alpha)
+        game_object = SimpleDecisionTask(num_of_repetitions=30,
+                                         manual_game=False,
+                                         my_agent=agent.ColorBasedAgent(alpha))
+        game_object.start_exp()
+        results.append(game_object.get_results()["Reward"].sum())
+        alpha *= 2
+
+    avg = []
+    for item in results:
+        avg.append(item / 30)
+
+    # importing the required module
+    import matplotlib.pyplot as plt
+
+    # plotting the points
+    plt.plot(alphas, avg)
+
+    # naming the x axis
+    plt.xlabel('Alpha value')
+    # naming the y axis
+    plt.ylabel('Average result')
+
+    # giving a title to my graph
+    plt.title('Alpha - Result graph')
+
+    # function to show the plot
+    plt.show()
