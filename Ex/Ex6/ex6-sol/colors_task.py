@@ -1,3 +1,6 @@
+#316493758
+#3
+
 import pandas as pd
 import numpy as np
 import pygame
@@ -161,35 +164,35 @@ class SimpleDecisionTask(object):
 
 
 def test_agent(agent_instance):
-    results = []
-    for i in range(100):
-        game_object = SimpleDecisionTask(num_of_repetitions=30,
-                                         manual_game=False,
-                                         my_agent=agent_instance)
-        game_object.start_exp()
-        results.append(game_object.get_results()["Reward"].sum())
-    return [max(results), sum(results) / len(results)]
+    tests_results = []
+    for _ in range(100):
+        experiment = SimpleDecisionTask(num_of_repetitions=30,
+                                        manual_game=False,
+                                        my_agent=agent_instance)
+        experiment.start_exp()
+        tests_results.append(experiment.get_results()["Reward"].sum())
+    return [max(tests_results), sum(tests_results) / len(tests_results)]
 
 
 if __name__ == "__main__":
     game = SimpleDecisionTask(num_of_repetitions=30, manual_game=False,
                               my_agent=agent.ComparingColorsAgent())  # Agent mode
 
-    print(test_agent(agent.RandomAgent()))
-    print(test_agent(agent.ComparingColorsAgent()))
-    print(test_agent(agent.ColorBasedAgent(0.2)))
+    # print(test_agent(agent.RandomAgent()))
+    # print(test_agent(agent.ComparingColorsAgent()))
+    # print(test_agent(agent.ColorBasedAgent()))
 
-    alpha = 0.2
+    alpha = 0
     results = []
     alphas = []
-    for i in range(1, 11):
+    for i in range(10):
         alphas.append(alpha)
         game_object = SimpleDecisionTask(num_of_repetitions=30,
                                          manual_game=False,
                                          my_agent=agent.ColorBasedAgent(alpha))
         game_object.start_exp()
         results.append(game_object.get_results()["Reward"].sum())
-        alpha *= 2
+        alpha += 0.1
 
     avg = []
     for item in results:

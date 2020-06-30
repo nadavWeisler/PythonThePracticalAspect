@@ -113,8 +113,7 @@ class ColorBasedAgent(Agent):
 
         if self.stats_table[left_color] == self.stats_table[right_color]:
             self.last_choice = np.random.choice([0, 1], 1, p=[0.5, 0.5])[0]
-
-        if self.stats_table[left_color] > self.stats_table[right_color]:
+        elif self.stats_table[left_color] > self.stats_table[right_color]:
             self.last_choice = 0
         else:
             self.last_choice = 1
@@ -131,9 +130,10 @@ class ColorBasedAgent(Agent):
         Get reward
         """
         self.stats_table[self.last_color] = self.get_probability(reward)
-        if self.stats_table[self.last_color] > 0:
+
+        if self.stats_table[self.last_color] < 0:
             self.stats_table[self.last_color] = 0
-        elif self.stats_table[self.last_color] < 1:
+        elif self.stats_table[self.last_color] > 1:
             self.stats_table[self.last_color] = 1
 
     def get_probability(self, reward):
